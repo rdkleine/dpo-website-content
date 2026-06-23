@@ -13,7 +13,9 @@
     style="width:100%;height:auto;display:block" />
 
   <!-- Lijst in een afgeschermd iframe (XSS-veilig: sandbox ontneemt alle rechten). -->
+  <!-- De ?v= wordt hieronder automatisch gezet vanuit version.txt. -->
   <iframe
+    id="dpo-timetable-iframe"
     src="https://rdkleine.github.io/dpo-website-content/program.html"
     title="Schedule"
     loading="lazy"
@@ -25,8 +27,8 @@
 
 <script>
 // Leest de versie (platte tekst, bv. "20260602124937") en zet die als cache-buster
-// op de afbeelding. We zetten ALLEEN een src-attribuut; er wordt niets als HTML
-// uitgevoerd, dus dit is geen XSS-vector.
+// op de afbeelding en het iframe. We zetten ALLEEN een src-attribuut; er wordt niets
+// als HTML uitgevoerd, dus dit is geen XSS-vector.
 (function () {
   var base = "https://rdkleine.github.io/dpo-website-content/";
   fetch(base + "version.txt", { cache: "no-store" })
@@ -36,7 +38,9 @@
       if (!/^[0-9]+$/.test(v)) return;            // alleen cijfers; anders niets doen
       var img = document.getElementById("dpo-timetable-img");
       if (img) img.src = base + "program.png?v=" + v;
+      var iframe = document.getElementById("dpo-timetable-iframe");
+      if (iframe) iframe.src = base + "program.html?v=" + v;
     })
-    .catch(function () { /* offline/CDN-issue: toon gewoon de zonder-versie afbeelding */ });
+    .catch(function () { /* offline/CDN-issue: toon gewoon de zonder-versie versie */ });
 })();
 </script>
